@@ -3,8 +3,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
-import { adminAddress, contractAddress, voterKitABI } from '@/lib/config';
+import { useAccount, useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
+import { contractAddress, voterKitABI } from '@/lib/config';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -39,6 +39,7 @@ type ProposalFormValues = z.infer<typeof proposalFormSchema>;
 
 export function CreateProposalForm() {
   const { toast } = useToast();
+  const { address } = useAccount();
   const [isAiChecking, setIsAiChecking] = useState(false);
   const [showIllicitConfirm, setShowIllicitConfirm] = useState(false);
   const [illicitReason, setIllicitReason] = useState('');
@@ -108,14 +109,14 @@ export function CreateProposalForm() {
   }
 
   async function createProposal(data: ProposalFormValues | null) {
-    if (!data) return;
+    if (!data || !address) return;
     const durationInSeconds = data.duration * 24 * 60 * 60;
     writeContract({
       address: contractAddress,
       abi: voterKitABI,
       functionName: 'createProposal',
       args: [data.question, data.options.map((o) => o.value), BigInt(durationInSeconds)],
-      account: adminAddress,
+      account: address,
     });
   }
 

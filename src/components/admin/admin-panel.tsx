@@ -1,14 +1,13 @@
 'use client';
 
 import { useAccount } from 'wagmi';
-import { adminAddress } from '@/lib/config';
 import { CreateProposalForm } from './create-proposal-form';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 export function AdminPanel() {
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAccount();
 
-  if (!isConnected || address !== adminAddress) {
+  if (!isConnected) {
     return null;
   }
 
