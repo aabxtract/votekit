@@ -14,6 +14,7 @@ const demoProposals = [
     options: ['Yes, focus on social media', 'Yes, focus on content marketing', 'No, allocate budget elsewhere'],
     endTime: BigInt(Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 3), // 3 days from now
     isVotingClosed: false,
+    tags: ['Marketing', 'Budget'],
   },
   {
     id: BigInt(998),
@@ -21,6 +22,7 @@ const demoProposals = [
     options: ['Keep the current logo', 'Commission a new design', 'Hold a design contest'],
     endTime: BigInt(Math.floor(Date.now() / 1000) - 60 * 60 * 24 * 2), // 2 days ago
     isVotingClosed: true,
+    tags: ['Branding', 'Design'],
   }
 ];
 

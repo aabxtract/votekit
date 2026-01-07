@@ -18,6 +18,7 @@ type DemoProposalCardProps = {
     options: string[];
     endTime: bigint;
     isVotingClosed: boolean;
+    tags?: string[];
   };
 };
 
@@ -64,6 +65,13 @@ export function DemoProposalCard({ proposal }: DemoProposalCardProps) {
           Voting ends on {new Date(Number(proposal.endTime) * 1000).toLocaleString()}.
           {!proposal.isVotingClosed && <Countdown endTime={proposal.endTime} />}
         </CardDescription>
+        {proposal.tags && (
+          <div className="flex flex-wrap gap-2 pt-2">
+            {proposal.tags.map((tag) => (
+              <Badge key={tag} variant="secondary">{tag}</Badge>
+            ))}
+          </div>
+        )}
       </CardHeader>
       <CardContent className="flex-grow">
         {proposal.isVotingClosed || hasVoted ? (
