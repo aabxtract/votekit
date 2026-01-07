@@ -1,7 +1,6 @@
 'use client';
 
 import { useReadContract } from 'wagmi';
-import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ProposalCard } from './proposal-card';
 import { contractAddress, voterKitABI } from '@/lib/config';
@@ -27,16 +26,17 @@ const demoProposals = [
 ];
 
 export function ProposalList() {
-  const { data: proposalCount, isLoading, error } = useReadContract({
+  const { data: proposalCount, isLoading, isError, isRefetching } = useReadContract({
     address: contractAddress,
     abi: voterKitABI,
     functionName: 'proposalCount',
     query: {
-      refetchInterval: 10000, // Refetch every 10 seconds
+      refetchInterval: 30000, // Refetch every 30 seconds
     }
   });
 
-  if (isLoading) {
+  // Only show the main loading skeleton on the initial load.
+  if (isLoading && !isRefetching) {
     return (
       <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
         {[...Array(3)].map((_, i) => (
@@ -46,8 +46,8 @@ export function ProposalList() {
     );
   }
 
-  if (error || !proposalCount || Number(proposalCount) === 0) {
-    // Show demo proposals if there's an error, no count, or count is 0
+  // If there's an error fetching or the blockchain has no proposals, show the demo ones.
+  if (isError || !proposalCount || Number(proposalCount) === 0) {
     return (
       <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
          {demoProposals.map((proposal) => (
@@ -59,7 +59,7 @@ export function ProposalList() {
 
   const count = Number(proposalCount);
   
-  // Create an array of IDs from count-1 down to 0
+  // Create an array of IDs from count-1 down to 0 to show newest first.
   const proposalIds = Array.from({ length: count }, (_, i) => count - 1 - i);
 
   return (
