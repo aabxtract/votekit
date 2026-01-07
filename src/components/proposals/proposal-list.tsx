@@ -5,6 +5,24 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ProposalCard } from './proposal-card';
 import { contractAddress, voterKitABI } from '@/lib/config';
+import { DemoProposalCard } from './demo-proposal-card';
+
+const demoProposals = [
+  {
+    id: BigInt(999),
+    question: 'Should we launch a new marketing campaign for Q3?',
+    options: ['Yes, focus on social media', 'Yes, focus on content marketing', 'No, allocate budget elsewhere'],
+    endTime: BigInt(Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 3), // 3 days from now
+    isVotingClosed: false,
+  },
+  {
+    id: BigInt(998),
+    question: 'Update the community logo?',
+    options: ['Keep the current logo', 'Commission a new design', 'Hold a design contest'],
+    endTime: BigInt(Math.floor(Date.now() / 1000) - 60 * 60 * 24 * 2), // 2 days ago
+    isVotingClosed: true,
+  }
+];
 
 export function ProposalList() {
   const { data: proposalCount, isLoading, error } = useReadContract({
@@ -49,11 +67,11 @@ export function ProposalList() {
         <h2 className="text-2xl font-semibold tracking-tight mb-6 font-headline">
           Proposals
         </h2>
-        <Card>
-          <CardContent className="p-10 text-center">
-            <p className="text-muted-foreground">No proposals have been created yet.</p>
-          </CardContent>
-        </Card>
+        <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2">
+           {demoProposals.map((proposal) => (
+             <DemoProposalCard key={proposal.id.toString()} proposal={proposal} />
+           ))}
+        </div>
       </section>
     );
   }
