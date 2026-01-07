@@ -9,11 +9,14 @@ import {
   SidebarTrigger,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { Vote, LayoutDashboard, PlusCircle } from 'lucide-react';
+import { Vote, LayoutDashboard, History } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export function AppSidebar() {
   const { state } = useSidebar();
+  const pathname = usePathname();
+
   return (
     <>
       <SidebarHeader>
@@ -33,7 +36,7 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              isActive
+              isActive={pathname === '/'}
               tooltip={{
                 children: 'Dashboard',
               }}
@@ -41,6 +44,20 @@ export function AppSidebar() {
               <Link href="/">
                 <LayoutDashboard />
                 <span>Dashboard</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              isActive={pathname === '/history'}
+              tooltip={{
+                children: 'My History',
+              }}
+            >
+              <Link href="/history">
+                <History />
+                <span>My History</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
