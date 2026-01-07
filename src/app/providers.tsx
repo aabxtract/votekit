@@ -27,12 +27,12 @@ export function Providers({ children }: PropsWithChildren) {
         <RainbowKitProvider
           theme={{
             lightMode: lightTheme({
-              accentColor: 'hsl(256 34% 60%)',
+              accentColor: 'hsl(262 34% 48%)',
               accentColorForeground: 'hsl(0 0% 100%)',
               borderRadius: 'medium',
             }),
             darkMode: darkTheme({
-              accentColor: 'hsl(256 34% 70%)',
+              accentColor: 'hsl(262 34% 68%)',
               accentColorForeground: 'hsl(0 0% 100%)',
               borderRadius: 'medium',
             }),
