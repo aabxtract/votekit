@@ -46,19 +46,8 @@ export function ProposalList() {
     );
   }
 
-  if (error) {
-    return (
-       <Card>
-        <CardContent className="p-6 text-center">
-          <p className="text-destructive">Could not fetch proposals. Make sure you are on the Sepolia network.</p>
-        </CardContent>
-      </Card>
-    )
-  }
-
-  const count = proposalCount ? Number(proposalCount) : 0;
-
-  if (count === 0) {
+  if (error || !proposalCount || Number(proposalCount) === 0) {
+    // Show demo proposals if there's an error, no count, or count is 0
     return (
       <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
          {demoProposals.map((proposal) => (
@@ -68,6 +57,8 @@ export function ProposalList() {
     );
   }
 
+  const count = Number(proposalCount);
+  
   // Create an array of IDs from count-1 down to 0
   const proposalIds = Array.from({ length: count }, (_, i) => count - 1 - i);
 
