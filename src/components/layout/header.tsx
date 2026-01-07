@@ -9,7 +9,7 @@ type HeaderProps = {
 export function Header({ title, children }: PropsWithChildren<HeaderProps>) {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
-      <div className="container flex h-16 items-center">
+      <div className="container flex h-16 items-center px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2">
           <SidebarTrigger className="md:hidden" />
           <h1 className="text-xl font-semibold tracking-tight">{title}</h1>
