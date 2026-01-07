@@ -1,22 +1,21 @@
-'use client';
+import type { PropsWithChildren } from "react";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { Vote } from 'lucide-react';
-import Link from 'next/link';
+type HeaderProps = {
+  title: string;
+};
 
-export function Header() {
+export function Header({ title, children }: PropsWithChildren<HeaderProps>) {
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-40 w-full border-b bg-background">
       <div className="container flex h-16 items-center">
-        <div className="mr-4 flex">
-          <Link href="/" className="mr-6 flex items-center space-x-2">
-            <Vote className="h-6 w-6 text-primary" />
-            <span className="font-bold sm:inline-block font-headline text-lg">
-              VoterKit
-            </span>
-          </Link>
+        <div className="flex items-center gap-2">
+          <SidebarTrigger className="md:hidden" />
+          <h1 className="text-xl font-semibold tracking-tight">{title}</h1>
         </div>
-        <div className="flex flex-1 items-center justify-end space-x-2">
+        <div className="ml-auto flex items-center gap-2">
+          {children}
           <ConnectButton />
         </div>
       </div>

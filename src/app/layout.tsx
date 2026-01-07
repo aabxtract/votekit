@@ -1,9 +1,10 @@
 import type {Metadata} from 'next';
 import './globals.css';
 import { Providers } from './providers';
-import { Header } from '@/components/layout/header';
 import { Toaster } from '@/components/ui/toaster';
 import { Inter } from 'next/font/google';
+import { SidebarProvider, Sidebar, SidebarInset } from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/layout/app-sidebar';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -25,10 +26,14 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-body antialiased`}>
         <Providers>
-          <div className="relative flex min-h-screen flex-col bg-background">
-            <Header />
-            <main className="flex-1">{children}</main>
-          </div>
+          <SidebarProvider>
+            <Sidebar>
+              <AppSidebar />
+            </Sidebar>
+            <SidebarInset>
+              <main className="flex-1">{children}</main>
+            </SidebarInset>
+          </SidebarProvider>
           <Toaster />
         </Providers>
       </body>

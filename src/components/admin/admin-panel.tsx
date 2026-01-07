@@ -1,25 +1,11 @@
 'use client';
 
-import { useAccount } from 'wagmi';
 import { CreateProposalForm } from './create-proposal-form';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
-export function AdminPanel() {
-  const { isConnected } = useAccount();
+type AdminPanelProps = {
+  onProposalCreated?: () => void;
+};
 
-  if (!isConnected) {
-    return null;
-  }
-
-  return (
-    <Card className="border-2 border-primary/50 shadow-lg">
-      <CardHeader>
-        <CardTitle className="font-headline">Admin Panel</CardTitle>
-        <CardDescription>Create a new proposal for the community to vote on.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <CreateProposalForm />
-      </CardContent>
-    </Card>
-  );
+export function AdminPanel({ onProposalCreated }: AdminPanelProps) {
+  return <CreateProposalForm onProposalCreated={onProposalCreated} />;
 }

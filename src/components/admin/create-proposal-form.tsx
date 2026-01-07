@@ -19,7 +19,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, PlusCircle, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { flagIllicitProposals } from '@/ai/flows/flag-illicit-proposals';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
@@ -37,7 +37,11 @@ const proposalFormSchema = z.object({
 
 type ProposalFormValues = z.infer<typeof proposalFormSchema>;
 
-export function CreateProposalForm() {
+type CreateProposalFormProps = {
+  onProposalCreated?: () => void;
+};
+
+export function CreateProposalForm({ onProposalCreated }: CreateProposalFormProps) {
   const { toast } = useToast();
   const { address } = useAccount();
   const [isAiChecking, setIsAiChecking] = useState(false);
@@ -59,26 +63,32 @@ export function CreateProposalForm() {
     control: form.control,
   });
 
-  const { data: hash, writeContract, isPending } = useWriteContract();
+  const { data: hash, writeContract, isPending, reset } = useWriteContract();
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
-    useWaitForTransactionReceipt({
-      hash,
-      onSuccess(data) {
-        toast({
-          title: 'Proposal Created',
-          description: `Transaction confirmed: ${data.transactionHash}`,
-        });
-        form.reset();
-      },
-      onError(error) {
-        toast({
-          title: 'Error',
-          description: error.message,
-          variant: 'destructive',
-        });
-      },
-    });
+    useWaitForTransactionReceipt({ hash });
+    
+  useEffect(() => {
+    if (isConfirmed) {
+      toast({
+        title: 'Proposal Created',
+        description: `Your proposal has been successfully created.`,
+      });
+      form.reset();
+      onProposalCreated?.();
+      reset();
+    }
+  }, [isConfirmed, toast, form, onProposalCreated, reset]);
+
+  useEffect(() => {
+    if (hash) {
+      toast({
+        title: 'Transaction Submitted',
+        description: 'Waiting for your proposal to be confirmed on the blockchain.',
+      });
+    }
+  }, [hash, toast]);
+
 
   async function onSubmit(data: ProposalFormValues) {
     setFormData(data);
@@ -99,7 +109,7 @@ export function CreateProposalForm() {
       console.error('AI check failed:', error);
       toast({
         title: 'AI Check Error',
-        description: 'Could not verify proposal content. Please try again.',
+        description: 'Could not verify proposal content. Proceeding without check.',
         variant: 'destructive',
       });
       await createProposal(data); // Failsafe: proceed if AI check fails
@@ -116,7 +126,6 @@ export function CreateProposalForm() {
       abi: voterKitABI,
       functionName: 'createProposal',
       args: [data.question, data.options.map((o) => o.value), BigInt(durationInSeconds)],
-      account: address,
     });
   }
 
@@ -125,7 +134,7 @@ export function CreateProposalForm() {
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
             control={form.control}
             name="question"
@@ -142,28 +151,30 @@ export function CreateProposalForm() {
 
           <div>
             <FormLabel>Options</FormLabel>
-            {fields.map((field, index) => (
-              <FormField
-                control={form.control}
-                key={field.id}
-                name={`options.${index}.value`}
-                render={({ field }) => (
-                  <FormItem className="mt-2">
-                    <div className="flex items-center gap-2">
-                      <FormControl>
-                        <Input {...field} placeholder={`Option ${index + 1}`} />
-                      </FormControl>
-                      {fields.length > 2 && (
-                        <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}>
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            ))}
+            <div className="space-y-2 mt-2">
+              {fields.map((field, index) => (
+                <FormField
+                  control={form.control}
+                  key={field.id}
+                  name={`options.${index}.value`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center gap-2">
+                        <FormControl>
+                          <Input {...field} placeholder={`Option ${index + 1}`} />
+                        </FormControl>
+                        {fields.length > 2 && (
+                          <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ))}
+            </div>
             <Button
               type="button"
               variant="outline"
@@ -191,7 +202,7 @@ export function CreateProposalForm() {
             )}
           />
 
-          <Button type="submit" disabled={isLoading} className="w-full sm:w-auto bg-accent hover:bg-accent/90">
+          <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {isAiChecking ? 'Checking content...' : isPending ? 'Check wallet...' : isConfirming ? 'Confirming...' : 'Create Proposal'}
           </Button>

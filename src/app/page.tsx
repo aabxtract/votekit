@@ -1,23 +1,52 @@
+'use client';
+import { useState } from 'react';
 import { AdminPanel } from '@/components/admin/admin-panel';
 import { ProposalList } from '@/components/proposals/proposal-list';
+import { Header } from '@/components/layout/header';
+import { Button } from '@/components/ui/button';
+import { PlusCircle } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { useAccount } from 'wagmi';
 
 export default function Home() {
-  return (
-    <div className="container max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <div className="space-y-12">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl font-headline">
-            Community Governance
-          </h1>
-          <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-            Have your say. Vote on proposals that shape our future. Your voice matters.
-          </p>
-        </div>
+  const [open, setOpen] = useState(false);
+  const { isConnected } = useAccount();
 
-        <AdminPanel />
-        
+  return (
+    <>
+      <Header title="Governance Dashboard">
+        {isConnected && (
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <PlusCircle />
+                <span>Create Proposal</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[625px]">
+              <DialogHeader>
+                <DialogTitle>Create Proposal</DialogTitle>
+                <DialogDescription>
+                  Fill out the form below to create a new proposal for the community to vote on.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="mt-4">
+                 <AdminPanel onProposalCreated={() => setOpen(false)} />
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+      </Header>
+      <div className="container max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <ProposalList />
       </div>
-    </div>
+    </>
   );
 }

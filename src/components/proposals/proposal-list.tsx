@@ -36,16 +36,11 @@ export function ProposalList() {
 
   if (isLoading) {
     return (
-      <section>
-        <h2 className="text-2xl font-semibold tracking-tight mb-6 font-headline">
-          Proposals
-        </h2>
-        <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2">
-          {[...Array(2)].map((_, i) => (
-            <Skeleton key={i} className="h-96 rounded-xl" />
-          ))}
-        </div>
-      </section>
+      <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+        {[...Array(3)].map((_, i) => (
+          <Skeleton key={i} className="h-96 rounded-xl" />
+        ))}
+      </div>
     );
   }
 
@@ -63,16 +58,11 @@ export function ProposalList() {
 
   if (count === 0) {
     return (
-      <section>
-        <h2 className="text-2xl font-semibold tracking-tight mb-6 font-headline">
-          Proposals
-        </h2>
-        <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2">
-           {demoProposals.map((proposal) => (
-             <DemoProposalCard key={proposal.id.toString()} proposal={proposal} />
-           ))}
-        </div>
-      </section>
+      <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+         {demoProposals.map((proposal) => (
+           <DemoProposalCard key={proposal.id.toString()} proposal={proposal} />
+         ))}
+      </div>
     );
   }
 
@@ -80,15 +70,10 @@ export function ProposalList() {
   const proposalIds = Array.from({ length: count }, (_, i) => count - 1 - i);
 
   return (
-    <section>
-       <h2 className="text-2xl font-semibold tracking-tight mb-6 font-headline">
-          Proposals
-        </h2>
-      <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2">
-        {proposalIds.map((id) => (
-          <ProposalCard key={id} proposalId={BigInt(id)} />
-        ))}
-      </div>
-    </section>
+    <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+      {proposalIds.map((id) => (
+        <ProposalCard key={id} proposalId={BigInt(id)} />
+      ))}
+    </div>
   );
 }
